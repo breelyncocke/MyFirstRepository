@@ -1,0 +1,74 @@
+---
+title: "STA 445 HW3"
+author: "Breelyn Cocke"
+date: "February 29th, 2023"
+output: pdf_document
+---
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+library(readr)
+library(readxl)
+```
+
+## Problem 1
+
+Download from GitHub the data file [Example_5.xls](https://github.com/dereksonderegger/444/raw/master/data-raw/Example_5.xls). Open it in Excel and figure out which sheet of data we should import into R. At the same time figure out how many initial rows need to be skipped. Import the data set into a data frame and show the structure of the imported data using the `str()` command. Make sure that your data has $n=31$ observations and the three columns are appropriately named. If you make any modifications to the data file, comment on those modifications.
+
+```{r}
+treedata <- read_excel('Example_5.xls', sheet='RawData', range ='A5:C36') 
+str(treedata)
+```
+
+The imported data takes the structure of a tibble since I used the read_excel command vs the read.excel command. There are 31 observations in the 3 labeled columns.
+
+## Problem 2
+
+Download from GitHub the data file  [Example_3.xls](https://github.com/dereksonderegger/444/raw/master/data-raw/Example_3.xls). Import the data set into a data frame and show the structure of the imported data using the `tail()` command which shows the last few rows of a data table.  Make sure the Tesla values are `NA` where appropriate and that both `-9999` and `NA` are imported as NA values. If you make any modifications to  the data file, comment on those modifications.
+
+```{r}
+cardata <- read_excel('Example_3.xls', sheet='data', range='A1:L34', na= c('NA', '-9999')) 
+tail(cardata)
+```
+
+## Problem 3
+
+Download all of the files from GitHub `data-raw/InsectSurveys` directory 
+[here.](https://github.com/dereksonderegger/444/raw/master/data-raw/InsectSurveys) Each month's file contains a sheet that contains site level information about each of the sites that were surveyed. The second sheet contains information about the number of each species that was observed at each site. Import the data for each month and create a single `site` data frame with information from each month. Do the same for the `observations`. Document any modifications you make to the data files. Comment on the importance of consistency of your data input sheets.
+
+```{r, results='hide'}
+read_excel('May.xlsx', sheet=1, range ='A1:F10', na=c('NA'))
+read_excel('June.xlsx', sheet=1, range ='A1:F10', na=c('NA'))
+read_excel('July.xlsx', sheet=1, range ='A1:F10', na=c('NA'))
+read_excel('August.xlsx', sheet=1, range ='A1:F10', na=c('NA'))
+read_excel('September.xlsx', sheet=1, range ='A1:F10', na=c('NA'))
+read_excel('October.xlsx', sheet=1, range ='A1:F10', na=c('NA'))
+```
+
+```{r}
+files <- c('May.xlsx', 'June.xlsx', 'July.xlsx', 'August.xlsx', 'September.xlsx', 'October.xlsx')
+data <- NULL
+for(file in files){
+  temp.data <- read_excel(file, sheet=1, range ='A1:F10', na=c('NA'))
+  data <- rbind(data, temp.data)}
+data
+```
+
+```{r, results='hide'}
+read_excel('May.xlsx', sheet=2, range ='A1:C37', na=c('NA'))
+read_excel('June.xlsx', sheet=2, range ='A1:C37', na=c('NA'))
+read_excel('July.xlsx', sheet=2, range ='A1:C37', na=c('NA'))
+read_excel('August.xlsx', sheet=2, range ='A1:C37', na=c('NA'))
+read_excel('September.xlsx', sheet=2, range ='A1:C37', na=c('NA'))
+read_excel('October.xlsx', sheet=2, range ='A1:C37', na=c('NA'))
+```
+```{r}
+files1 <- c('May.xlsx', 'June.xlsx', 'July.xlsx', 'August.xlsx', 'September.xlsx', 'October.xlsx')
+data1 <- NULL
+for(file in files1){
+  temp.data1 <- read_excel(file, sheet=2, range ='A1:C37', na=c('NA'))
+  data1 <- rbind(data1, temp.data1)}
+data1
+```
+
+The data files in excel required a lot of changes to generate consistency between the sheets. In order to be able to use the for loop and rbind in the manner that I did, the sheet, row, and column names had to be perfectly aligned without error in spacing, capitalization, and order. For example, there were many times in which I had to change capitalization, such as "sites" to "Sites". I also had to make sure each date was coded the same way, and get rid of unwanted character strings by changing to "NA". It took a bit of time to correct the data within the excel sheets to make sure each of my sheets matched correctly. This time spent could have been avoided if consistency had been kept when making the original files. There is more room for error without consistency, and essentially we were on a goose chase trying to track down and eliminate discrepancies. Going forward, I will note the importance of maintaining consistency in data labeling and organization to save future time constraints. 
